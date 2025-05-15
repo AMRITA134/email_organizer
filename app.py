@@ -5,13 +5,13 @@ app = Flask(__name__)
 model = joblib.load("email_model.pkl")
 vectorizer = joblib.load("vectorizer.pkl")
 
-@app.route("/predict", methods=["POST"])
+@app.route('/predict', methods=['POST'])
 def predict():
-    data = request.json
-    text = data.get("text", "")
-    X = vectorizer.transform([text])
-    prediction = model.predict(X)[0]
-    return jsonify({"importance": prediction})
+    data = request.get_json()
+    text = data.get('text', '')
+    
+    transformed_text = vectorizer.transform([text])
+    print("Input vector:", transformed_text)
 
-if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0")
+    prediction = model.predict(transformed_text)[0]
+    return jsonify({'importance': prediction})
